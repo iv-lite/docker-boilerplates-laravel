@@ -46,7 +46,7 @@ CMD [ "php-fpm", "-FR" ]
 
 FROM base AS development
 # ----------------------------------- development stage
-ARG USERNAME=laravel
+ARG USERNAME
 
 WORKDIR /tools
 
@@ -56,7 +56,8 @@ COPY docker/tools/adduser.sh /tools/adduser.sh
 RUN /tools/adduser.sh && \
     apk update && \
     apk add --update --no-cache \
-        npm
+        npm \
+        git
 
 USER ${USERNAME}
 

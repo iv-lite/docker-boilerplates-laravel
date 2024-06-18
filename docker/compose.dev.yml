@@ -1,4 +1,4 @@
-name: ${APP_NAME}
+name: boilerplate-laravel
 
 services:
   app:
@@ -7,10 +7,13 @@ services:
       service: app
     build:
       target: development
+      args:
+        - USERNAME=${USERNAME}
     environment:
       - DEBUG_INIT=${DEBUG_INIT:-false}
     volumes:
       - ../:/app
+      - ${HOME}/.ssh:/home/${USERNAME}/.ssh
 
   nginx:
     extends:

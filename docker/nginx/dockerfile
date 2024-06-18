@@ -1,0 +1,33 @@
+FROM nginx:1.27-alpine AS base
+# ----------------------------------- base stage
+WORKDIR /var/www/html
+
+FROM base AS production
+# ----------------------------------- builder stage
+WORKDIR /etc/nginx/ssl
+
+COPY docker/nginx/ssl/ /etc/nginx/ssl/
+COPY ./public .
+COPY docker/nginx/conf.d/default.conf.template /etc/nginx/templates/
+
+WORKDIR /var/www/html
+
+FROM base AS development
+# ----------------------------------- development stage
+ARG USERNAME=laravel
+ARG APP_DOMAIN
+
+WORKDIR /etc/nginx/ssl 
+
+RUN apk update && \
+    apk add --update --no-cache \
+        nss && \
+    curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64" && \
+    chmod +x mkcert-v*-linux-amd64 && \
+    cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert && \
+    mkcert \
+        -key-file certificate.key \
+        -cert-file certificate.pem \
+        ${APP_DOMAIN}
+
+WORKDIR /var/www/html

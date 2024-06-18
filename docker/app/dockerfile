@@ -1,0 +1,73 @@
+FROM php:8.2.20-fpm-alpine3.20 AS base
+# ----------------------------------- base stage
+ARG REQUIREMENTS
+ARG PACKAGES="curl-dev libpng-dev zlib-dev libzip-dev libxml2-dev oniguruma-dev libmcrypt-dev openssl-dev ${REQUIREMENTS}"
+ARG PHP_REQUIREMENTS
+ARG PHP_EXENSIONS="ctype curl dom fileinfo filter mbstring pdo session xml ${PHP_REQUIREMENTS}"
+RUN apk update \
+    && apk add --update --no-cache --virtual \
+        .phpize-deps $PHPIZE_DEPS\
+        ${PACKAGES} \
+    && docker-php-ext-install -j$(nproc) \
+            ${PHP_EXENSIONS}
+
+WORKDIR /app
+
+COPY /docker/app/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
+
+FROM base AS composer-builder
+# ----------------------------------- composer-builder stage
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY composer.* /app/
+
+RUN if [-f /app/composer.json  ]; then \
+        composer install; \
+    fi
+
+FROM base AS node-builder
+# ----------------------------------- node-builder stage
+COPY package.* /app/
+
+RUN apk update && \
+    apk add --update --no-cache \
+        npm && \
+    if [-f /app/package.json  ]; then \
+        npm install; \
+    fi
+
+FROM base AS production
+# ----------------------------------- production stage
+COPY --from=composer-builder /app/vendor /app/vendor
+COPY --from=node-builder /app/node_modules /app/node_modules
+
+COPY . /app/
+
+CMD [ "php-fpm", "-FR" ]
+
+FROM base AS development
+# ----------------------------------- development stage
+ARG USERNAME=laravel
+
+WORKDIR /tools
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY docker/tools/adduser.sh /tools/adduser.sh
+
+RUN /tools/adduser.sh && \
+    apk update && \
+    apk add --update --no-cache \
+        npm
+
+USER ${USERNAME}
+
+WORKDIR /home/${USERNAME}/tools
+ENV PATH=/home/${USERNAME}/tools:${PATH}
+
+COPY --chown=${USERNAME}:${USERNAME} docker/tools/init.sh /home/${USERNAME}/tools/init.sh
+
+WORKDIR /app
+
+ENV PATH=/home/${USERNAME}/.composer/vendor/bin:${PATH}
+RUN composer global require laravel/installer
+
+CMD [ "php-fpm" ]

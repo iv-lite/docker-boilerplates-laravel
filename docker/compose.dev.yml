@@ -1,0 +1,25 @@
+name: ${APP_NAME}
+
+services:
+  app:
+    extends:
+      file: compose.yml
+      service: app
+    build:
+      target: development
+    environment:
+      - DEBUG_INIT=${DEBUG_INIT:-false}
+    volumes:
+      - ../:/app
+
+  nginx:
+    extends:
+      file: compose.yml
+      service: nginx
+    build:
+      target: development
+      args:
+        - APP_DOMAIN=${APP_DOMAIN}
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/templates/
+      - ../:/var/www/html

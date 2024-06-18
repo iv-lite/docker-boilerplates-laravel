@@ -1,6 +1,6 @@
 FROM nginx:1.27-alpine AS base
 # ----------------------------------- base stage
-WORKDIR /var/www/html
+WORKDIR /app
 
 FROM base AS production
 # ----------------------------------- builder stage
@@ -10,14 +10,14 @@ COPY docker/nginx/ssl/ /etc/nginx/ssl/
 COPY ./public .
 COPY docker/nginx/conf.d/default.conf.template /etc/nginx/templates/
 
-WORKDIR /var/www/html
+WORKDIR /app
 
 FROM base AS development
 # ----------------------------------- development stage
 ARG USERNAME=laravel
 ARG APP_DOMAIN
 
-WORKDIR /etc/nginx/ssl 
+WORKDIR /etc/nginx/ssl
 
 RUN apk update && \
     apk add --update --no-cache \
@@ -30,4 +30,4 @@ RUN apk update && \
         -cert-file certificate.pem \
         ${APP_DOMAIN}
 
-WORKDIR /var/www/html
+WORKDIR /app

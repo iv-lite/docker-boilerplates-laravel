@@ -22,4 +22,4 @@ services:
         - APP_DOMAIN=${APP_DOMAIN}
     volumes:
       - ./nginx/conf.d/:/etc/nginx/templates/
-      - ../:/var/www/html
+      - ../:/app

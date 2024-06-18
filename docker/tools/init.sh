@@ -9,6 +9,9 @@ laravel new $1
 cp -a /app/$1/. .
 rm -rf $1
 php artisan migrate:reset
+if [ $DB_CONNECTION = "sqlite" ]; then
+    rm /app/${DB_DATABASE}
+fi
 
 if [ $DEBUG_INIT = true ]; then
     cp /app/.env.app /app/.env
@@ -19,5 +22,5 @@ else
 fi
 
 php artisan key:generate
-php artisan migrate:refresh
+php artisan make:session-table
 php artisan migrate --seed

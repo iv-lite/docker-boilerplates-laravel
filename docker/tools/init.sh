@@ -8,6 +8,8 @@ fi
 laravel new $1
 cp -a /app/$1/. .
 rm -rf $1
+php artisan migrate:reset
+
 if [ $DEBUG_INIT = true ]; then
     cp /app/.env.app /app/.env
 else
@@ -17,5 +19,5 @@ else
 fi
 
 php artisan key:generate
-php artisan migrate:install
+php artisan migrate:refresh
 php artisan migrate --seed

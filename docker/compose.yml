@@ -10,7 +10,7 @@ services:
       args:
         - REQUIREMENTS=${REQUIREMENTS}
         - PHP_REQUIREMENTS=${PHP_REQUIREMENTS}
-        - USERNAME=${DOCKER_USERNAME:-laravel}
+        - DOCKER_USERNAME=${DOCKER_USERNAME:-laravel}
     environment:
       - APP_ENV=${APP_ENV}
       - APP_DEBUG=${APP_DEBUG}

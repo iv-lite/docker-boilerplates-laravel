@@ -11,7 +11,7 @@ services:
       - DEBUG_INIT=${DEBUG_INIT:-false}
     volumes:
       - ../:/app
-      - ${HOME}/.ssh:/home/${USERNAME}/.ssh
+      - ${HOME}/.ssh:/home/${DOCKER_USERNAME}/.ssh
 
   mariadb:
     extends:
@@ -30,4 +30,4 @@ services:
         - APP_DOMAIN=${APP_DOMAIN}
     volumes:
       - ./nginx/conf.d/:/etc/nginx/templates/
-      - ../:/app
+      # - ../:/app

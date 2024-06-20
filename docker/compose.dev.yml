@@ -7,17 +7,22 @@ services:
       service: app
     build:
       target: development
-      args:
-        - USERNAME=${USERNAME}
     environment:
       - DEBUG_INIT=${DEBUG_INIT:-false}
     volumes:
       - ../:/app
       - ${HOME}/.ssh:/home/${USERNAME}/.ssh
 
+  mariadb:
+    extends:
+      file: compose.mariadb.yml
+      service: mariadb
+    ports:
+      - ${DOCKER_DB_PORT}:3306
+
   nginx:
     extends:
-      file: compose.yml
+      file: compose.nginx.yml
       service: nginx
     build:
       target: development

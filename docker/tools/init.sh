@@ -5,6 +5,11 @@ if [ -z $1 ] || [ $1 = "boilerplate" ]; then
     exit 1
 fi
 
+if [ -f composer.json ]; then
+    echo "Project already initialized"
+    exit 1
+fi
+
 laravel new $1
 cp -a /app/$1/. .
 rm -rf $1

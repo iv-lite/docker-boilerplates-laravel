@@ -4,7 +4,7 @@ ARG REQUIREMENTS
 ARG PACKAGES="curl-dev libpng-dev zlib-dev libzip-dev libxml2-dev oniguruma-dev libmcrypt-dev openssl-dev ${REQUIREMENTS}"
 ARG PHP_REQUIREMENTS
 ARG PHP_EXENSIONS="ctype curl dom fileinfo filter mbstring pdo session xml ${PHP_REQUIREMENTS}"
-ARG DOCKER_USERNAME
+ARG USERNAME
 
 WORKDIR /app
 
@@ -14,10 +14,10 @@ RUN apk update && \
         ${PACKAGES} && \
     docker-php-ext-install -j$(nproc) \
             ${PHP_EXENSIONS} && \
-    adduser -s /bin/sh -D ${DOCKER_USERNAME} && \
+    adduser -s /bin/sh -D ${USERNAME} && \
     rm -rf /tools && \
     apk del .packages && \
-    chown -R ${DOCKER_USERNAME}:${DOCKER_USERNAME} /app
+    chown -R ${USERNAME}:${USERNAME} /app
 
 COPY /docker/app/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
 
@@ -43,18 +43,18 @@ RUN apk update && \
 
 FROM base AS production
 # ----------------------------------- production stage
-COPY --from=composer-builder --chown=${DOCKER_USERNAME}:${DOCKER_USERNAME} /app/vendor /app/vendor
-COPY --from=node-builder --chown=${DOCKER_USERNAME}:${DOCKER_USERNAME} /app/node_modules /app/node_modules
+COPY --from=composer-builder --chown=${USERNAME}:${USERNAME} /app/vendor /app/vendor
+COPY --from=node-builder --chown=${USERNAME}:${USERNAME} /app/node_modules /app/node_modules
 
-COPY --chown=${DOCKER_USERNAME}:${DOCKER_USERNAME}  . /app/
+COPY --chown=${USERNAME}:${USERNAME}  . /app/
 
-USER ${DOCKER_USERNAME}
+USER ${USERNAME}
 
 CMD [ "php-fpm" ]
 
 FROM base AS development
 # ----------------------------------- development stage
-ARG DOCKER_USERNAME
+ARG USERNAME
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
@@ -64,16 +64,16 @@ RUN apk update && \
         git \
         openssh 
 
-WORKDIR /home/${DOCKER_USERNAME}/tools
-ENV PATH=/home/${DOCKER_USERNAME}/tools:${PATH}
+WORKDIR /home/${USERNAME}/tools
+ENV PATH=/home/${USERNAME}/tools:${PATH}
 
-COPY --chown=${DOCKER_USERNAME}:${DOCKER_USERNAME} docker/tools/init.sh /home/${DOCKER_USERNAME}/tools/init.sh
+COPY --chown=${USERNAME}:${USERNAME} docker/tools/init.sh /home/${USERNAME}/tools/init.sh
 
-USER ${DOCKER_USERNAME}
+USER ${USERNAME}
 
 WORKDIR /app
 
-ENV PATH=/home/${DOCKER_USERNAME}/.composer/vendor/bin:${PATH}
+ENV PATH=/home/${USERNAME}/.composer/vendor/bin:${PATH}
 RUN composer global require laravel/installer
 
 CMD [ "php-fpm" ]

@@ -1,3 +1,5 @@
+name: boilerplates-laravel
+
 services:
   app:
     extends:

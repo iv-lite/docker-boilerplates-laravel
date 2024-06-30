@@ -10,6 +10,7 @@ if [ -f composer.json ]; then
     exit 1
 fi
 
+cd /app
 laravel new $1
 cp -a /app/$1/. .
 rm -rf $1

@@ -7,3 +7,5 @@ services:
       - MARIADB_DATABASE=${DB_DATABASE}
       - MARIADB_USER=${DB_USERNAME}
       - MARIADB_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${DOCKER_DB_PORT}:3306

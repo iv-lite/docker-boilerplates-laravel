@@ -13,13 +13,6 @@ services:
       - ../:/app
       - ${HOME}/.ssh:/home/${DOCKER_USERNAME}/.ssh
 
-  mariadb:
-    extends:
-      file: compose.mariadb.yml
-      service: mariadb
-    ports:
-      - ${DOCKER_DB_PORT}:3306
-
   nginx:
     extends:
       file: compose.nginx.yml

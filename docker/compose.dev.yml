@@ -9,6 +9,7 @@ services:
       target: development
     environment:
       - DEBUG_INIT=${DEBUG_INIT:-false}
+      - APP_NAME=${APP_NAME}
     volumes:
       - ../:/app
       - ${HOME}/.ssh:/home/${USERNAME}/.ssh
@@ -23,8 +24,6 @@ services:
       target: development
       args:
         - APP_DOMAIN=${APP_DOMAIN}
-    environment:
-      - APP_NAME=${APP_NAME}
     volumes:
       - ./nginx/conf.d/:/etc/nginx/templates/
       # - ../:/app

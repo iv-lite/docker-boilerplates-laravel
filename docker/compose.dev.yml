@@ -12,6 +12,8 @@ services:
     volumes:
       - ../:/app
       - ${HOME}/.ssh:/home/${USERNAME}/.ssh
+    networks:
+      - default
 
   nginx:
     extends:
@@ -24,3 +26,8 @@ services:
     volumes:
       - ./nginx/conf.d/:/etc/nginx/templates/
       # - ../:/app
+    networks:
+      - default
+
+networks:
+  default:

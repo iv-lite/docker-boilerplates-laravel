@@ -1,6 +1,6 @@
 services:
   mariadb:
-    image: mariadb:11.4.2-noble
+    image: mariadb:latest
     restart: unless-stopped
     environment:
       - MARIADB_RANDOM_ROOT_PASSWORD=1
@@ -9,3 +9,10 @@ services:
       - MARIADB_PASSWORD=${DB_PASSWORD}
     ports:
       - ${DOCKER_DB_PORT}:3306
+    volumes:
+      - storage_mariadb:/var/lib/mysql
+    networks:
+      - default
+
+volumes:
+  storage_mariadb:

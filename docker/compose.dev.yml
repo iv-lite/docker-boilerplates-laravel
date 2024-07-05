@@ -23,6 +23,8 @@ services:
       target: development
       args:
         - APP_DOMAIN=${APP_DOMAIN}
+    environment:
+      - APP_NAME=${APP_NAME}
     volumes:
       - ./nginx/conf.d/:/etc/nginx/templates/
       # - ../:/app

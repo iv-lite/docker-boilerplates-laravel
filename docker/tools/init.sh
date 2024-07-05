@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-if [ -z $1 ] || [ $1 = "boilerplate" ]; then
+if [ -z $APP_NAME ] || [ $APP_NAME = "boilerplate" ]; then
     echo "Please provide a name different than boilerplate."
     exit 1
 fi
@@ -13,9 +13,9 @@ fi
 cd /app
 
 if ! [ -f /app/composer.json ]; then
-    laravel new $1
-    cp -a /app/$1/. .
-    rm -rf $1
+    laravel new $APP_NAME
+    cp -a /app/$APP_NAME/. .
+    rm -rf $APP_NAME
 fi
 
 php artisan migrate:reset

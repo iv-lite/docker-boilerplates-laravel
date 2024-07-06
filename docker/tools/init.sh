@@ -16,9 +16,10 @@ if ! [ -f /app/composer.json ]; then
     laravel new $APP_NAME
     cp -a /app/$APP_NAME/. .
     rm -rf $APP_NAME
+
+    php artisan migrate:reset
 fi
 
-php artisan migrate:reset
 if [ $DB_CONNECTION = "sqlite" ]; then
     rm /app/${DB_DATABASE}
 fi

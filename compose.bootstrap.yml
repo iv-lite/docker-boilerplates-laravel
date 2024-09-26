@@ -1,0 +1,22 @@
+services:
+  app:
+    extends:
+      file: compose.yml
+      service: app
+    volumes:
+      - ${APP_NAME}:/app
+    networks:
+      - default
+    
+  mariadb:
+    extends:
+      file: compose.yml
+      service: mariadb
+    networks:
+      - default
+
+volumes:
+  storage_mariadb:
+
+networks:
+  default:

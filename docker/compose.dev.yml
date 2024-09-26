@@ -7,9 +7,6 @@ services:
       service: app
     build:
       target: development
-    environment:
-      - DEBUG_INIT=${DEBUG_INIT:-false}
-      - APP_NAME=${APP_NAME}
     volumes:
       - ../:/app
       - ${HOME}/.ssh:/home/${USERNAME}/.ssh

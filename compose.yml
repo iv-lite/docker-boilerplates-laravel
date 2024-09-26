@@ -1,0 +1,25 @@
+services:
+  app:
+    extends:
+      file: docker/compose.yml
+      service: app
+    build:
+      target: development
+    volumes:
+      - ./:/app
+      - ./install:/home/${USERNAME}/tools/install
+    networks:
+      - default
+    
+  mariadb:
+    extends:
+      file: docker/compose.mariadb.yml
+      service: mariadb
+    networks:
+      - default
+    
+volumes:
+  storage_mariadb:
+
+networks:
+  default:

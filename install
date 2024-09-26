@@ -1,0 +1,52 @@
+#!/usr/bin/env sh
+basepath="$(dirname $0)"
+
+app_name="$1"
+destination="$2"
+
+if [ -z $app_name ] || [ $app_name = "boilerplate" ]; then
+    echo "Please provide a name different than boilerplate."
+    exit 1
+fi
+
+if [ -z $destination ]; then
+    echo "Please provide a destination path"
+    exit 1
+fi
+
+if ! [ -f /.dockerenv ]; then
+    cd "${basepath}"
+
+    if [ -d $app_name ]; then
+        docker compose -f compose.bootstrap.yml up -d
+        docker compose exec app install $app_name $destination
+        docker compose down
+
+        mkdir -p $destination
+        rm -rf $destination
+        cp -r $app_name $destination
+        rm -rf $app_name
+
+        cp -r docker $destination/
+        cp -r .devcontainer $destination/
+        cp .env.app $destination/.env
+
+        exit
+    fi
+
+    docker compose -f compose.yml up -d
+    docker compose exec app install $app_name $destination
+    docker compose down
+    exit
+fi
+
+if [ -f composer.json ]; then
+    php artisan migrate:reset
+    php artisan key:generate
+    php artisan make:session-table
+    php artisan migrate --seed
+    exit
+fi
+
+cd /app
+laravel new $app_name
